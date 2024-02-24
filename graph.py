@@ -19,7 +19,6 @@ class Graph:
         cost = 0
         while i<len(path)-1:
             try:
-                #possible bug - adding element to dict
                 cost += self._adjacency_dict[path[i]][path[i+1]]
             except KeyError as e:
                 raise KeyError(f"The path cannot be traveled from {path[i]} to {path[i+1]}")
