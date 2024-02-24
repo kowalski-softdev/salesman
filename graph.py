@@ -35,10 +35,10 @@ class Graph:
     is_path_traversable(path)
         Returns True if there're edges between every element of
         the path and the next element. Returns False otherwise.
+    """
         
-	
-    def __init__(self, directed=True):
-        self._adjacency_dict = defaultdict(dict)
+    def __init__(self, graph=defaultdict(dict), directed=True):
+        self._adjacency_dict = graph
         self._directed = directed
 
     def add_edge(self, source: str, target: str, weight:int|float=1) -> None:
@@ -48,7 +48,6 @@ class Graph:
         else:
             if self._adjacency_dict.get(target) is None:
                 self._adjacency_dict[target]
-    """
 
     def calculate_cost(self, path: list) -> float:
         i = 0
