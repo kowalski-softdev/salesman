@@ -37,8 +37,10 @@ class Graph:
         the path and the next element. Returns False otherwise.
     """
         
-    def __init__(self, graph=defaultdict(dict), directed=True):
-        self._adjacency_dict = graph
+    def __init__(self, directed=True, graph=None):
+        self._adjacency_dict = defaultdict(dict)
+        if graph is not None:
+            self._adjacency_dict.update(graph)
         self._directed = directed
 
     def add_edge(self, source: str, target: str, weight:int|float=1) -> None:
