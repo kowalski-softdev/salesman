@@ -64,7 +64,7 @@ class Graph:
 
     def is_path_traversable(self, path: list) -> bool:
         if len(path) == 0:
-            raise ValueError('The path is empty.')
+            raise ValueError('The path cannot be empty.')
 
         if len(path) == 1:
             if path[0] in self.vertices_list:
