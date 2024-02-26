@@ -50,6 +50,9 @@ class Genetic_TSP:
             for gene in self._genome_pool[1]:
                 if gene not in ind.genome:
                     return False
+        if self._cyclical and ind.genome[0] != ind.genome[-1]:
+            return False
+        else:
             return True
 
     def populate(self) -> None:
@@ -215,11 +218,14 @@ if __name__ == "__main__":
         adj_dict[key] = {}
     for key in adj_dict:
         for target in adj_dict:
-            if key+1 == target or (target==19 and key==0):
+            if key+1 == target or (target==0 and key==19):
                 adj_dict[key].update({target:1})
             else:
                 adj_dict[key].update({target:randint(2,50)})
 
+    from time import time
+    start = time()
+    new_start_time = start
     problem_map = Graph(graph=adj_dict)
     test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=True)
     test_tube.populate()
@@ -236,4 +242,40 @@ if __name__ == "__main__":
             best = new_best
             print(new_best.genome)
             print(f'score={new_best.score}')
-            print()
+            print(f'length={len(new_best.genome)}')
+            print(f'absolute time={time()-start:.02f} seconds')
+            print(f'Since last best={time()-new_start_time:.02f} seconds')
+            new_start_time = time()
+    print(f'It toook {time()-start} seconds')
+
+    from time import sleep
+    print('-------------------------------------*********************----------------------')
+    sleep(10)
+    print('NEW GAME'.center(40))
+    for key in range(20,40):
+        adj_dict[key] = {}
+        for _ in range(0,10):
+            adj_dict[key].update({randint(0,key-1):randint(1,50)})
+    problem_map = Graph(graph=adj_dict)
+    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=True)
+    test_tube.populate()
+    test_tube.choose_best()
+    print(test_tube._best_ind.genome)
+    print(f'score={test_tube._best_ind.score}')
+    print()
+    best = test_tube._best_ind
+    while test_tube._generation < 10000000 and test_tube._best_ind.score > 20:
+        test_tube.next_generation()
+        test_tube.choose_best()
+        new_best = test_tube._best_ind
+        if new_best is not best:
+            best = new_best
+            print(new_best.genome)
+            print(f'score={new_best.score}')
+            print(f'length={len(new_best.genome)}')
+            print(f'absolute time={time()-start:.02f} seconds')
+            print(f'Since last best={time()-new_start_time:.02f} seconds')
+            new_start_time = time()
+    print(f'It toook {time()-start} seconds')
+
+
