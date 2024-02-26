@@ -44,16 +44,17 @@ class Genetic_TSP:
         self._population.sort(key=lambda individual: individual.score)
 
     def is_feasible(self, ind:Individual_TSP) -> bool:
+        if self._cyclical and ind.genome[0] != ind.genome[-1]:
+            return False
+        if self._starting_position is not None and ind.genome[0] != self._starting_position:
+            return False
         if not self._problem_map.is_path_traversable(ind.genome):
             return False
         else:
             for gene in self._genome_pool[1]:
                 if gene not in ind.genome:
                     return False
-        if self._cyclical and ind.genome[0] != ind.genome[-1]:
-            return False
-        else:
-            return True
+        return True
 
     def populate(self) -> None:
         self._population = []
@@ -244,22 +245,23 @@ if __name__ == "__main__":
             print(f'score={new_best.score}')
             print(f'length={len(new_best.genome)}')
             print(f'absolute time={time()-start:.02f} seconds')
-            print(f'Since last best={time()-new_start_time:.02f} seconds')
+            print(f'Since last best={(time()-new_start_time):.02f} seconds')
             new_start_time = time()
     print(f'It toook {time()-start} seconds')
 
     from time import sleep
-    print('-------------------------------------*********************----------------------')
+    print('*********************'.center(80))
     sleep(10)
-    print('NEW GAME'.center(40))
+    print('NEW GAME'.center(80))
     for key in range(20,40):
         adj_dict[key] = {}
         for _ in range(0,10):
             adj_dict[key].update({randint(0,key-1):randint(1,50)})
     problem_map = Graph(graph=adj_dict)
-    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=True)
+    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=False)
     test_tube.populate()
     test_tube.choose_best()
+    print(len(test_tube._population))
     print(test_tube._best_ind.genome)
     print(f'score={test_tube._best_ind.score}')
     print()
@@ -274,7 +276,7 @@ if __name__ == "__main__":
             print(f'score={new_best.score}')
             print(f'length={len(new_best.genome)}')
             print(f'absolute time={time()-start:.02f} seconds')
-            print(f'Since last best={time()-new_start_time:.02f} seconds')
+            print(f'Since last best={(time()-new_start_time):.02f} seconds')
             new_start_time = time()
     print(f'It toook {time()-start} seconds')
 
