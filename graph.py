@@ -83,6 +83,10 @@ class Graph:
             i += 1
         return True
 
+    def connected_to(self, source):
+        """Returns list of vertices connected by edge from source, if none returns empty list."""
+        return list(self._adjacency_dict[source])
+
     @property
     def vertices_count(self):
         """The number of vertices in the graph.""" 

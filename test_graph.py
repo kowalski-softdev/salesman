@@ -115,5 +115,22 @@ class TestGraph(unittest.TestCase):
         self.undirected_graph.add_edge('B','C',10)
         self.assertEqual(self.undirected_graph.vertices_list, ['A','B','C'])
 
+    def test_connected_to(self):
+        self.graph.add_edge('A','B')
+        self.assertEqual(self.graph.connected_to('A'), ['B'])
+        self.graph.add_edge('A','C')
+        self.assertEqual(self.graph.connected_to('A'), ['B', 'C'])
+        self.assertEqual(self.graph.connected_to('B'), [])
+        self.graph.add_edge('G', 'A')
+        self.assertEqual(self.graph.connected_to('G'), ['A'])
+        
+        self.undirected_graph.add_edge('A','B')
+        self.assertEqual(self.undirected_graph.connected_to('A'), ['B'])
+        self.undirected_graph.add_edge('A','C')
+        self.assertEqual(self.undirected_graph.connected_to('A'), ['B', 'C'])
+        self.assertEqual(self.undirected_graph.connected_to('B'), ['A'])
+        self.undirected_graph.add_edge('G', 'A')
+        self.assertEqual(self.undirected_graph.connected_to('G'), ['A'])
+        
 if __name__ == "__main__":
     unittest.main()
