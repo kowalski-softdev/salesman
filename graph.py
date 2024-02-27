@@ -41,7 +41,7 @@ class Graph:
         self._adjacency_dict = defaultdict(dict)
         if graph is not None:
             self._adjacency_dict.update(graph)
-            for vertex in self._adjacency_dict:
+            for vertex in graph.keys():
                 for target_vertex in self._adjacency_dict[vertex]:
                     if self._adjacency_dict.get(target_vertex, None) is None:
                         self._adjacency_dict[target_vertex] = {}

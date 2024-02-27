@@ -131,6 +131,12 @@ class TestGraph(unittest.TestCase):
         self.assertEqual(self.undirected_graph.connected_to('B'), ['A'])
         self.undirected_graph.add_edge('G', 'A')
         self.assertEqual(self.undirected_graph.connected_to('G'), ['A'])
+
+    def test_initialization_with_dictionary(self):
+        d = {'A':{'B':2, 'C':3}, 'B':{'C':4}}
+        graph = Graph(d)
+        self.assertEqual(graph.vertices_count, 3)
+        self.assertEqual(graph.vertices_list, ['A','B','C'])
         
 if __name__ == "__main__":
     unittest.main()
