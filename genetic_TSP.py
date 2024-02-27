@@ -1,6 +1,6 @@
 from graph import Graph
 from functools import total_ordering
-from random import sample, randint
+from random import sample, randint, choice
 from copy import deepcopy
 
 class Individual_TSP:
@@ -56,17 +56,39 @@ class Genetic_TSP:
                     return False
         return True
 
+#    def populate(self) -> None:
+#        self._population = []
+#        genome_boundries = (len(self._genome_pool[1]), len(self._genome_pool[10]))
+#        safety_check = self._population_size * 1000
+#        while len(self._population) < self._population_size and safety_check > 0:
+#            safety_check -= 1
+#            multiplier = randint(1,10)
+#            genome_length = randint(genome_boundries[0], len(self._genome_pool[multiplier]))
+#            ind = Individual_TSP(sample(self._genome_pool[multiplier], genome_length), self._starting_position, self._cyclical)
+#            if self.is_feasible(ind):
+#                self._population.append(ind)
+
     def populate(self) -> None:
         self._population = []
-        genome_boundries = (len(self._genome_pool[1]), len(self._genome_pool[10]))
         safety_check = self._population_size * 1000
         while len(self._population) < self._population_size and safety_check > 0:
             safety_check -= 1
-            multiplier = randint(1,10)
-            genome_length = randint(genome_boundries[0], len(self._genome_pool[multiplier]))
-            ind = Individual_TSP(sample(self._genome_pool[multiplier], genome_length), self._starting_position, self._cyclical)
+            genome = []
+            if self._starting_position:
+                genome.append(self._starting_position)
+            else:
+                genome.append(choice(self._genome_pool[1]))
+            #checks if all nodes of the graph will be visited
+            while not(all(gene in genome for gene in self._genome_pool[1])) and len(genome) < len(self._genome_pool[1]*10):
+                #connected nodes
+                viable_genes = self._problem_map.connected_to(genome[-1])
+                if not viable_genes:
+                    break
+                genome.append(choice(viable_genes))
+            ind = Individual_TSP(genome, self._starting_position, self._cyclical)
             if self.is_feasible(ind):
                 self._population.append(ind)
+                
 
     def choose_best(self) -> None:
         self.calculate_fitness()
@@ -265,6 +287,7 @@ if __name__ == "__main__":
     #print(adj_dict)
     problem_map = Graph(graph=adj_dict)
     test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=None, cyclical=False)
+    #NEW POPULATE TEST
     test_tube.populate()
     print(len(test_tube._population))
     test_tube.choose_best()
