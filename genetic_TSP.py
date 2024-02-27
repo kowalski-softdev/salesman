@@ -235,7 +235,7 @@ if __name__ == "__main__":
     print(f'score={test_tube._best_ind.score}')
     print()
     best = test_tube._best_ind
-    while test_tube._generation < 10000000 and test_tube._best_ind.score > 20:
+    while test_tube._generation < 1 and test_tube._best_ind.score > 20:
         test_tube.next_generation()
         test_tube.choose_best()
         new_best = test_tube._best_ind
@@ -251,15 +251,22 @@ if __name__ == "__main__":
 
     from time import sleep
     print('*********************'.center(80))
-    sleep(10)
     print('NEW GAME'.center(80))
     for key in range(20,40):
         adj_dict[key] = {}
         for _ in range(0,10):
             adj_dict[key].update({randint(0,key-1):randint(1,50)})
+    for key in range(0,20):
+        for _ in range(0,5):
+            adj_dict[key].update({randint(20,39):randint(1,50)})
+    for key in range(0,39):
+        adj_dict[key].update({key+1:1})
+    adj_dict[39].update({0:1})
+    #print(adj_dict)
     problem_map = Graph(graph=adj_dict)
-    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=False)
+    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=None, cyclical=False)
     test_tube.populate()
+    print(len(test_tube._population))
     test_tube.choose_best()
     print(len(test_tube._population))
     print(test_tube._best_ind.genome)

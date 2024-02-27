@@ -37,7 +37,7 @@ class Graph:
         the path and the next element. Returns False otherwise.
     """
         
-    def __init__(self, directed=True, graph=None):
+    def __init__(self, graph=None, directed:bool=True):
         self._adjacency_dict = defaultdict(dict)
         if graph is not None:
             self._adjacency_dict.update(graph)
@@ -101,7 +101,21 @@ if __name__ == "__main__":
     assert tr_map.calculate_cost(['A','B','C']) == 5
     print(f"Everything's fine")
     print(tr_map.vertices_count)
-    print(tr_map.is_path_traversable(['A','B','C']))
+    #print(tr_map.is_path_traversable(['A','B','C']))
     tr_map.add_edge('D','E',7)
     print(tr_map.vertices_count)
-    print(tr_map.is_path_traversable(['A','B','C','D','E']))
+    #print(tr_map.is_path_traversable(['A','B','C','D','E']))
+
+    tr_map = Graph(graph={'A':{'B':1, 'D':2, 'E':1},
+                'B':{'C':1, 'A':2},
+                'C':{'D':1, 'B':2},
+                'D':{'A':1, 'C':2},
+                'E':{'A':1}
+                })
+    path = ['E','A','B','C','D','E']
+    assert (tr_map.is_path_traversable(path) == False)
+    path = ['E']
+    print(tr_map._adjacency_dict)
+    assert tr_map.is_path_traversable(path)
+    path = ['E','A','B','C','D','A','E']
+    assert tr_map.is_path_traversable(path) 
