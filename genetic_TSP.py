@@ -44,13 +44,17 @@ class Genetic_TSP:
         self._population.sort(key=lambda individual: individual.score)
 
     def is_feasible(self, ind:Individual_TSP) -> bool:
+        if self._cyclical and ind.genome[0] != ind.genome[-1]:
+            return False
+        if self._starting_position is not None and ind.genome[0] != self._starting_position:
+            return False
         if not self._problem_map.is_path_traversable(ind.genome):
             return False
         else:
             for gene in self._genome_pool[1]:
                 if gene not in ind.genome:
                     return False
-            return True
+        return True
 
     def populate(self) -> None:
         self._population = []
@@ -100,9 +104,9 @@ class Genetic_TSP:
     def mutate(self, individual) -> Individual_TSP:
         new_ind = Individual_TSP(deepcopy(individual.genome), self._starting_position, self._cyclical)
         if randint(0,100) <= 10:
-            del new_ind.genome[randint(0,len(individual.genome)-1)]
+            del new_ind.genome[randint(0,len(new_ind.genome)-1)]
         elif randint(0,100) <= 10:
-            new_ind.genome.insert(randint(0,len(individual.genome)), new_ind.genome[randint(0, len(new_ind.genome)-1)])
+            new_ind.genome.insert(randint(0,len(new_ind.genome)), new_ind.genome[randint(0, len(new_ind.genome)-1)])
 
         pos1 = randint(0, len(new_ind.genome)-1)
         pos2 = randint(0, len(new_ind.genome)-1)
@@ -118,6 +122,9 @@ class Genetic_TSP:
             pos3 = randint(0, len(new_ind.genome)-1)
             new_ind.genome[pos3:pos3] = moved
         return new_ind
+
+    def crossbreed(self, individuals:list):
+        pass
 
 if __name__ == "__main__":
     adj_dict = {'A':{'B':1, 'D':2},
@@ -212,15 +219,56 @@ if __name__ == "__main__":
         adj_dict[key] = {}
     for key in adj_dict:
         for target in adj_dict:
-            if key+1 == target or (target==19 and key==0):
+            if key+1 == target or (target==0 and key==19):
                 adj_dict[key].update({target:1})
             else:
                 adj_dict[key].update({target:randint(2,50)})
 
+    from time import time
+    start = time()
+    new_start_time = start
     problem_map = Graph(graph=adj_dict)
     test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=0, cyclical=True)
     test_tube.populate()
     test_tube.choose_best()
+    print(test_tube._best_ind.genome)
+    print(f'score={test_tube._best_ind.score}')
+    print()
+    best = test_tube._best_ind
+    while test_tube._generation < 1 and test_tube._best_ind.score > 20:
+        test_tube.next_generation()
+        test_tube.choose_best()
+        new_best = test_tube._best_ind
+        if new_best is not best:
+            best = new_best
+            print(new_best.genome)
+            print(f'score={new_best.score}')
+            print(f'length={len(new_best.genome)}')
+            print(f'absolute time={time()-start:.02f} seconds')
+            print(f'Since last best={(time()-new_start_time):.02f} seconds')
+            new_start_time = time()
+    print(f'It toook {time()-start} seconds')
+
+    from time import sleep
+    print('*********************'.center(80))
+    print('NEW GAME'.center(80))
+    for key in range(20,40):
+        adj_dict[key] = {}
+        for _ in range(0,10):
+            adj_dict[key].update({randint(0,key-1):randint(1,50)})
+    for key in range(0,20):
+        for _ in range(0,5):
+            adj_dict[key].update({randint(20,39):randint(1,50)})
+    for key in range(0,39):
+        adj_dict[key].update({key+1:1})
+    adj_dict[39].update({0:1})
+    #print(adj_dict)
+    problem_map = Graph(graph=adj_dict)
+    test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=None, cyclical=False)
+    test_tube.populate()
+    print(len(test_tube._population))
+    test_tube.choose_best()
+    print(len(test_tube._population))
     print(test_tube._best_ind.genome)
     print(f'score={test_tube._best_ind.score}')
     print()
@@ -233,34 +281,10 @@ if __name__ == "__main__":
             best = new_best
             print(new_best.genome)
             print(f'score={new_best.score}')
-            print()
-    #gene is not a city but path from one city to another
-    #for city, destinations in problem_map:
-    #    for destination in destinations:
-    #        genes.add((city, destination))
+            print(f'length={len(new_best.genome)}')
+            print(f'absolute time={time()-start:.02f} seconds')
+            print(f'Since last best={(time()-new_start_time):.02f} seconds')
+            new_start_time = time()
+    print(f'It toook {time()-start} seconds')
 
-    # from genes like (A,B),(B,C) create ['A','B','C','A'], adding first city to end for return, remove impossible paths
-    # remove genomes that don't visit all cities
-    genome = list()
-
-    import random
-    cities = []
-    #for city in problem_map:
-    #    cities.append(city)
-
-    problem_map = Graph()
-    genes = problem_map.vertices_list
-
-    from random import sample, randint
-    #individual.length = randint(len(genes),len(genes)*10)
-    #multiplier = individual.length // len(genes)
-    #if multiplier * len(genes) < individual.length:
-    #    multiplier += 1
-    #individual.genome = sample(genes * multiplier, individual.length)
-
-    #problem_map.is_path_traversable(individual.genome)
-    #individual.score = problem_map.calculate_cost(individual.genome)
-
-    #make individual class comparable
-    
 
