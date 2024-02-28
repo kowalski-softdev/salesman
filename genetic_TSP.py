@@ -281,9 +281,6 @@ if __name__ == "__main__":
     for key in range(0,20):
         for _ in range(0,5):
             adj_dict[key].update({randint(20,39):randint(1,50)})
-    for key in range(0,39):
-        adj_dict[key].update({key+1:1})
-    adj_dict[39].update({0:1})
     #print(adj_dict)
     problem_map = Graph(graph=adj_dict)
     test_tube = Genetic_TSP(problem_map, population_size=1000, starting_position=None, cyclical=False)
@@ -296,6 +293,7 @@ if __name__ == "__main__":
     print(f'score={test_tube._best_ind.score}')
     print()
     best = test_tube._best_ind
+    from collections import Counter
     while test_tube._generation < 10000000 and test_tube._best_ind.score > 20:
         test_tube.next_generation()
         test_tube.choose_best()
@@ -307,6 +305,10 @@ if __name__ == "__main__":
             print(f'length={len(new_best.genome)}')
             print(f'absolute time={time()-start:.02f} seconds')
             print(f'Since last best={(time()-new_start_time):.02f} seconds')
+            print(f'{sorted(new_best.genome)}')
+            counter = Counter(new_best.genome)
+            print(f'Most visited: {counter.most_common(1)}')
+            print('-'*20)
             new_start_time = time()
     print(f'It toook {time()-start} seconds')
 
