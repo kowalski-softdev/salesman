@@ -133,7 +133,7 @@ class Graph:
 
         for vertex in path:
             if vertex not in self._adjacency_dict:
-                raise ValueError(f"Vertex '{vertex}' does not exist in the graph")
+                raise ValueError(f"Vertex '{vertex}' does not exist in the graph.")
 
         for i in range(len(path)-1):
             source = path[i]
@@ -144,8 +144,28 @@ class Graph:
         return True
 
     def connected_to(self, source):
-        """Returns list of vertices connected by edge from source, if none returns empty list."""
-        return list(self._adjacency_dict[source])
+        """
+        Returns list of vertices connected by an edge from the source vertex.
+
+        Returns an empty list if the source vertex has no outgoing 
+        edges.
+
+        Parameters:
+        - source: The source vertex for which connected vertices are 
+        to be returned.
+
+        Returns:
+        - list: A list of vertices connected by an edge from the 
+        source vertex.
+
+        Raises:
+        - ValueError: If the source vertex doesn't exist in the graph.
+        """
+
+        if source not in self._adjacency_dict:
+            raise ValueError(f"The vertex '{source}' does not exist in the graph.")
+        
+        return list(self._adjacency_dict.get(source))
 
     @property
     def vertices_count(self):
