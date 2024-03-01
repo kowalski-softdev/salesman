@@ -29,9 +29,8 @@ class Graph:
         Adds an edge from source to target of value weight, represented
         as a dictionary inside a dictionary; adjacency[source][target]
     calculate_cost(path)
-        Returns a sum of edges weights between vertices in path.
-        path = ['A','B','C'] returns sum of edges from 'A' to 'B' and
-        from 'B' to 'C'.
+        Calculates the total cost of traversing a given path in the 
+        graph.
     is_path_traversable(path)
         Returns True if there're edges between every element of
         the path and the next element. Returns False otherwise.
@@ -56,14 +55,48 @@ class Graph:
                 self._adjacency_dict[target]
 
     def calculate_cost(self, path: list) -> float:
-        i = 0
+        """
+        Calculates the total cost of traversing a given path in the 
+        graph.
+
+        The method computes the total cost of traversing the specified
+        path in the graph.
+        The cost of traversing a path is the sum of the weights of the
+        edges between consecutive vertices.
+
+        Parameters:
+        - path (list): A list of vertices representing the path to 
+                        calculate cost for.
+                        Each vertex in the list should be a key in the
+                        adjacency dictionary.
+
+        Returns:
+        - float: The total cost of traversing the path.
+
+        Raises:
+        - ValueError: If the path contains less than two vertices.
+        - KeyError: If there is no edge between any pair of consecutive
+                    vertices in the path.
+
+        Example:
+        >>> graph = Graph()
+        >>> graph.add_edge('A', 'B', 5)
+        >>> graph.add_edge('B', 'C', 10)
+        >>> graph.calculate_cost(['A', 'B', 'C'])
+        15
+        """
+
+        if len(path) < 2:
+            raise ValueError("Path must contain at least two vertices.")
+
         cost = 0.0
-        while i<len(path)-1:
-            try:
-                cost += self._adjacency_dict[path[i]][path[i+1]]
-            except KeyError as e:
-                raise KeyError(f"There's no edge from {path[i]} to {path[i+1]}")
-            i += 1
+        for i in range(len(path)-1):
+            source = path[i]
+            target = path[i+1]
+            edge_weight = self._adjacency_dict.get(source, {}).get(target)
+            if edge_weight is None:
+                raise KeyError(f"There's no edge from {source} to {target}.")
+            cost += edge_weight
         return cost
 
     def is_path_traversable(self, path: list) -> bool:
