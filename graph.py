@@ -36,23 +36,34 @@ class Graph:
         the path and the next element. Returns False otherwise.
     """
         
-    def __init__(self, graph=None, directed:bool=True):
+    def __init__(self, graph=None, is_graph_directed:bool=True):
         self._adjacency_dict = defaultdict(dict)
-        if graph is not None:
+        if graph:
             self._adjacency_dict.update(graph)
-            for vertex in graph.keys():
-                for target_vertex in self._adjacency_dict[vertex]:
-                    if self._adjacency_dict.get(target_vertex, None) is None:
-                        self._adjacency_dict[target_vertex] = {}
-        self._directed = directed
+            #it basically enforces that given adjacency dictionary 
+            #conforms to behavior of add_edge, gives the same result
+            for target_vertices in graph.values():
+                for vertex in target_vertices:
+                    #side-effect is the purpose
+                    self._adjacency_dict[vertex]
+            if not is_graph_directed:
+                for source in graph:
+                    for target in graph.get(source):
+                        if self._adjacency_dict.get(target).get(source) is None:
+                            self._adjacency_dict[target][source] = self._adjacency_dict[source][target]
+                        elif self._adjacency_dict.get(source).get(target) != self._adjacency_dict.get(target).get(source):
+                            raise ValueError(f"The graph (adjacency dictionary) is not undirected. The weight of an edge from {source} to {target} is different than an edge from {target} to {source}. {self._adjacency_dict.get(source).get(target)} != {self._adjacency_dict.get(target).get(source)}")
 
-    def add_edge(self, source: str, target: str, weight:int|float=1) -> None:
-        self._adjacency_dict[source].update({target: weight})
-        if not self._directed:
-            self._adjacency_dict[target].update({source: weight})
+        self._is_graph_directed = is_graph_directed
+
+    def add_edge(self, source, target, weight:float=1.0) -> None:
+        #implied adding source vertex to dictionary
+        self._adjacency_dict[source][target] = weight
+        if self._is_graph_directed:
+            #adding the target vertex
+            self._adjacency_dict[target]
         else:
-            if self._adjacency_dict.get(target) is None:
-                self._adjacency_dict[target]
+            self._adjacency_dict[target][source] = weight
 
     def calculate_cost(self, path: list) -> float:
         """
@@ -160,6 +171,13 @@ class Graph:
 
         Raises:
         - ValueError: If the source vertex doesn't exist in the graph.
+
+        Example:
+        >>> graph = Graph()
+        >>> graph.add_edge('A', 'B', 5)
+        >>> graph.add_edge('A', 'C', 10)
+        >>> graph.connected_to('A')
+        ['B', 'C']
         """
 
         if source not in self._adjacency_dict:

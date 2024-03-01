@@ -4,7 +4,7 @@ from graph import Graph
 class TestGraph(unittest.TestCase):
     def setUp(self):
         self.graph = Graph()
-        self.undirected_graph = Graph(directed=False)
+        self.undirected_graph = Graph(is_graph_directed=False)
 
     def tearDown(self):
         self.graph = None
@@ -132,11 +132,35 @@ class TestGraph(unittest.TestCase):
         self.undirected_graph.add_edge('G', 'A')
         self.assertEqual(self.undirected_graph.connected_to('G'), ['A'])
 
-    def test_initialization_with_dictionary(self):
+    def test_initialization_with_dictionary_directed_graph(self):
         d = {'A':{'B':2, 'C':3}, 'B':{'C':4}}
         graph = Graph(d)
         self.assertEqual(graph.vertices_count, 3)
         self.assertEqual(graph.vertices_list, ['A','B','C'])
         
+        d = {'A':{'B':2, 'C':3}, 'B':{'C':4, 'D':5, 'E':2}, 'G':{'A':7}}
+        graph = Graph(d)
+        self.assertEqual(graph.vertices_count, 6)
+        self.assertEqual(graph.vertices_list, ['A', 'B', 'G', 'C', 'D', 'E'])
+
+    def test_initialization_with_dictionary_undirected_graph(self):
+        d = {'A':{'B':2, 'C':3}, 'B':{'C':4}}
+        graph = Graph(d, is_graph_directed = False)
+        self.assertEqual(graph.vertices_count, 3)
+        self.assertEqual(graph.vertices_list, ['A','B','C'])
+        for source in graph._adjacency_dict:
+            for target in graph._adjacency_dict.get(source):
+                self.assertEqual(graph._adjacency_dict.get(source).get(target), graph._adjacency_dict.get(target).get(source))
+        
+        d = {'A':{'B':2, 'C':3}, 'B':{'C':4, 'D':5, 'E':2}, 'G':{'A':7}}
+        graph = Graph(d, is_graph_directed = False)
+        self.assertEqual(graph.vertices_count, 6)
+        self.assertEqual(graph.vertices_list, ['A', 'B', 'G', 'C', 'D', 'E'])
+        for source in graph._adjacency_dict:
+            for target in graph._adjacency_dict.get(source):
+                self.assertEqual(graph._adjacency_dict.get(source).get(target), graph._adjacency_dict.get(target).get(source))
+        
+        #TO-DO raising ValueError for incorrect graph: {'A':{'B':2}, 'B':{'A':3}}
+
 if __name__ == "__main__":
     unittest.main()
