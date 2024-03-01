@@ -100,24 +100,43 @@ class Graph:
         return cost
 
     def is_path_traversable(self, path: list) -> bool:
-        if len(path) == 0:
-            raise ValueError('The path cannot be empty.')
+        """
+        Checks if a given path in the graph can be traversed.
 
-        if len(path) == 1:
-            if path[0] in self.vertices_list:
-                return True
-            else:
-                return False
+        The method checks if a given path in the graph can be 
+        traversed.
+        A path is traversable if there exists an edge between every 
+        pair of consecutive vertices.
 
-        i = 0
-        while i < len(path)-1:
-            try:
-                condition = self._adjacency_dict.get(path[i]).get(path[i+1])
-            except (KeyError, AttributeError):
+        Parameters:
+        - path (list): A list of vertices representing the path for 
+                        which method checks if it can be traversed.
+                        Each vertex in the list should be a key in the 
+                        adjacency dictionary.
+
+        Returns:
+        - bool: True if a path is traversable, False otherwise.
+
+        Raises:
+        - ValueError: If the path contains less than two vertices.
+
+        Example:
+        >>> graph = Graph()
+        >>> graph.add_edge('A', 'B', 5)
+        >>> graph.add_edge('B', 'C', 10)
+        >>> graph.is_path_traversable(['A', 'B', 'C'])
+        True
+        """
+
+        if len(path) < 2:
+            raise ValueError("Path must contain at least two vertices.")
+
+        for i in range(len(path)-1):
+            source = path[i]
+            target = path[i+1]
+            edge = self._adjacency_dict.get(source, {}).get(target)
+            if edge is None:
                 return False
-            if condition is None:
-                return False
-            i += 1
         return True
 
     def connected_to(self, source):
