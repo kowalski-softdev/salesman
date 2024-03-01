@@ -131,10 +131,14 @@ class Graph:
         if len(path) < 2:
             raise ValueError("Path must contain at least two vertices.")
 
+        for vertex in path:
+            if vertex not in self._adjacency_dict:
+                raise ValueError(f"Vertex '{vertex}' does not exist in the graph")
+
         for i in range(len(path)-1):
             source = path[i]
             target = path[i+1]
-            edge = self._adjacency_dict.get(source, {}).get(target)
+            edge = self._adjacency_dict.get(source).get(target)
             if edge is None:
                 return False
         return True
