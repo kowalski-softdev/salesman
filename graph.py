@@ -46,17 +46,43 @@ class Graph:
                 for vertex in target_vertices:
                     #side-effect is the purpose
                     self._adjacency_dict[vertex]
+
             if not is_graph_directed:
                 for source in graph:
                     for target in graph.get(source):
                         if self._adjacency_dict.get(target).get(source) is None:
                             self._adjacency_dict[target][source] = self._adjacency_dict[source][target]
                         elif self._adjacency_dict.get(source).get(target) != self._adjacency_dict.get(target).get(source):
-                            raise ValueError(f"The graph (adjacency dictionary) is not undirected. The weight of an edge from {source} to {target} is different than an edge from {target} to {source}. {self._adjacency_dict.get(source).get(target)} != {self._adjacency_dict.get(target).get(source)}")
+                            raise ValueError(f"The graph (adjacency dictionary) is not undirected. \
+                                    The weight of an edge from {source} to {target} is different than \
+                                    the weight of an edge from {target} to {source}. \
+                                    {self._adjacency_dict.get(source).get(target)} != {self._adjacency_dict.get(target).get(source)}")
 
         self._is_graph_directed = is_graph_directed
 
     def add_edge(self, source, target, weight:float=1.0) -> None:
+        """
+        Adds an edge between source and target vertex.
+
+        The methods adds an edge between a source vertex and target 
+        vertex. If a source and target vertex are the same, the edge 
+        is self-directed. 
+        If the source and/or target vertices are not in the graph, 
+        they are added.
+        If graph is undirected, an edge from target to source is added 
+        with the same weight.
+
+        Parameters:
+        - source: A key representing a vertex from which an edge is 
+                    going from.
+        - target: A key representing a vertex to which an edge is 
+                    going to.
+        - weight (float): A weight of the edge.
+
+        Example:
+        >>> graph = Graph()
+        >>> graph.add_edge('A', 'B', 5)
+        """
         #implied adding source vertex to dictionary
         self._adjacency_dict[source][target] = weight
         if self._is_graph_directed:
@@ -196,28 +222,4 @@ class Graph:
         return list(self._adjacency_dict)
 
 if __name__ == "__main__":
-    tr_map = Graph()
-    tr_map.add_edge('A','B',2)
-    tr_map.add_edge('B','A',1) 
-    tr_map.add_edge('B','C',3)
-    assert tr_map.calculate_cost(['A','B','C']) == 5
-    print(f"Everything's fine")
-    print(tr_map.vertices_count)
-    #print(tr_map.is_path_traversable(['A','B','C']))
-    tr_map.add_edge('D','E',7)
-    print(tr_map.vertices_count)
-    #print(tr_map.is_path_traversable(['A','B','C','D','E']))
-
-    tr_map = Graph(graph={'A':{'B':1, 'D':2, 'E':1},
-                'B':{'C':1, 'A':2},
-                'C':{'D':1, 'B':2},
-                'D':{'A':1, 'C':2},
-                'E':{'A':1}
-                })
-    path = ['E','A','B','C','D','E']
-    assert (tr_map.is_path_traversable(path) == False)
-    path = ['E']
-    print(tr_map._adjacency_dict)
-    assert tr_map.is_path_traversable(path)
-    path = ['E','A','B','C','D','A','E']
-    assert tr_map.is_path_traversable(path) 
+    pass
