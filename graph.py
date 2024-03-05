@@ -211,6 +211,9 @@ class Graph:
         
         return list(self._adjacency_dict.get(source))
 
+    def multidimensional_scaling(self) -> dict:
+        pass
+
     @property
     def vertices_count(self):
         """The number of vertices in the graph.""" 
