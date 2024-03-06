@@ -3,12 +3,18 @@ from pyglet.app import run
 from pyglet.shapes import Circle, Line
 from pyglet.graphics import Batch
 
-class Renderer(Window):
-    def __init__(self, x_window_size, y_window_size, adj_dict):
+class GraphRenderer(Window):
+    def __init__(self, x_window_size, y_window_size, adj_dict, is_directed=False):
         self.x_window_size = x_window_size
         self.y_window_size = y_window_size
         super().__init__(self.x_window_size, self.y_window_size, "Graph")
         self.batch = Batch()
+        self.adj_dict = adj_dict()
+        self.translate_table = None
+        self.pos_dict = None
+        # and if it is directed then lines connecting points will differ, at least with arrows
+        # calculating positions could be achieved by avarage of edges weight
+        self._is_directed = is_directed
         self.nodes_arr = []
         self.lines_arr = []
         for node_pos in adj_dict:

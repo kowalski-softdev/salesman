@@ -1,4 +1,5 @@
 from collections import defaultdict
+from graph_renderer import GraphRenderer
 
 class Graph:
     """
@@ -211,7 +212,41 @@ class Graph:
         
         return list(self._adjacency_dict.get(source))
 
+    # mocked method
+    # does multidimensional scaling can be updated? or it must to be run again?
     def multidimensional_scaling(self) -> dict:
+        import random
+        adj_dict = {}
+        for _ in range(10):
+            adj_dict[(random.randint(0,640), random.randint(0,640))] = {}
+        for vertex in adj_dict:
+            for neighbour in adj_dict[vertex]:
+                if vertex != neighbour:
+                    adj_dict[vertex].update({neighbour: 1})
+        return adj_dict
+
+    def render_graph(self):
+        d = self.multidimensional_scaling()
+        renderer = GraphRenderer(d)
+        renderer.display(path=None)
+        # path is a problem
+        # every time I have to translate a path from the way it's kept here
+        # like ['A','B','C']
+        # into a way it's transformed by multidimensional_scaling
+        # so [(10,15), (18,10), (15,5)]
+        # so, should I keep a translation table of some sort?
+        # maybe
+        # the best would be rid of the three data structures and make one
+        # but adding on coordinates on top of adjacency dictionary feels tacky
+        # render should be responsible for the whole thing I think
+        # but doesn't it already doing part of a work of render with the whole multidimensional_scaling
+        # but passing an adjacency dicitonary to renderer class feels also tacky
+        # but third butt is, it ain't gonna be decoupled if that's right word
+        # display always has to display the graph that is (implemented as) adjacency dict
+        # but here is thing, graph is abstract, data structure is concrete and what renderer needs is abstract
+        # not necessarily *this* concrete implementation
+        # first do later re-do and learn from all
+        renderer.display(path=[(10,12), (12,14)])
         pass
 
     @property
